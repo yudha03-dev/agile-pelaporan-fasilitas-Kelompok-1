@@ -2,9 +2,9 @@
   "name": "agile-pelaporan-fasilitas-kelompok-1",
   "version": "1.0.0",
   "description": "Menyediakan sistem pelaporan kerusakan fasilitas kampus yang cepat, transparan, dan mudah digunakan sehingga proses pelaporan dan penanganan kerusakan dapat dilakukan secara lebih efektif",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/yudha03-dev/agile-pelaporan-fasilitas-Kelompok-1#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "express": "^5.2.1",
     "multer": "^2.2.0",
     "sqlite3": "^6.0.1"
