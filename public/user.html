@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Pelapor</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f6f9;
+            margin:0;
+            padding:30px;
+        }
+
+        .container{
+            max-width:1200px;
+            margin:auto;
+        }
+
+        .card{
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom:25px;
+        }
+
+        h2{
+            margin-top:0;
+        }
+
+        input,
+        textarea{
+            width:100%;
+            padding:10px;
+            margin-bottom:10px;
+            border:1px solid #ccc;
+            border-radius:6px;
+        }
+
+        button{
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:10px 20px;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#2563eb;
+            color:white;
+            padding:10px;
+        }
+
+        td{
+            padding:10px;
+            border:1px solid #ddd;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Kirim Laporan Baru</h2>
+
+        <form id="reportForm">
+
+            <input
+                type="text"
+                id="judul"
+                placeholder="Judul Laporan"
+                required
+            >
+
+            <input
+                type="text"
+                id="lokasi"
+                placeholder="Lokasi"
+                required
+            >
+
+            <textarea
+                id="deskripsi"
+                placeholder="Deskripsi"
+                required
+            ></textarea>
+
+            <button type="submit">
+                Kirim Laporan
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Riwayat Laporan Saya</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Judul</th>
+                    <th>Lokasi</th>
+                    <th>Deskripsi</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="reportTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const user = JSON.parse(
+    localStorage.getItem("user")
+);
+
+if(!user){
+
+    window.location.href = "/login.html";
+
+}
+
+document
+.getElementById("reportForm")
+.addEventListener("submit", async (e)=>{
+
+    e.preventDefault();
+
+    const response = await fetch(
+        "/api/reports",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                user_id:user.id,
+                judul:document.getElementById("judul").value,
+                lokasi:document.getElementById("lokasi").value,
+                deskripsi:document.getElementById("deskripsi").value
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    alert(data.message);
+
+    loadReports();
+
+});
+
+async function loadReports(){
+
+    const response = await fetch(
+        "/api/reports/user/" + user.id
+    );
+
+    const reports = await response.json();
+
+    document.getElementById("reportTable").innerHTML =
+    reports.map(report => `
+        <tr>
+            <td>${report.judul}</td>
+            <td>${report.lokasi}</td>
+            <td>${report.deskripsi}</td>
+            <td>${report.status}</td>
+        </tr>
+    `).join("");
+
+}
+
+loadReports();
+
+</script>
+
+</body>
+</html>

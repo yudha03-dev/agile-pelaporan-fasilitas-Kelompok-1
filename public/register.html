@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Daftar CampusFix</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+<div class="card">
+
+<h2>Daftar CampusFix</h2>
+
+<form id="registerForm">
+
+<input type="text" id="nama" placeholder="Nama Lengkap" required>
+
+<input type="email" id="email" placeholder="Email" required>
+
+<input type="password" id="password" placeholder="Password" required>
+
+<select id="role">
+    <option value="mahasiswa">Mahasiswa</option>
+    <option value="dosen">Dosen</option>
+    <option value="staff">Staff</option>
+</select>
+
+<button type="submit">
+Daftar
+</button>
+
+</form>
+
+<p>
+Sudah punya akun?
+<a href="login.html">Login</a>
+</p>
+
+</div>
+</div>
+
+<script>
+
+document.getElementById("registerForm")
+.addEventListener("submit", async (e)=>{
+
+e.preventDefault();
+
+const nama = document.getElementById("nama").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const role = document.getElementById("role").value;
+
+const res = await fetch("/api/auth/register",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+nama,
+email,
+password,
+role
+})
+});
+
+const data = await res.json();
+
+alert(data.message);
+
+if(data.message==="Registrasi berhasil"){
+window.location.href="login.html";
+}
+
+});
+
+</script>
+
+</body>
+</html>
