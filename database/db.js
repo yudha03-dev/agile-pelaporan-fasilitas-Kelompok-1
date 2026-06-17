@@ -8,13 +8,28 @@ const db = new sqlite3.Database("./campusfix.db", (err) => {
     }
 });
 
+// USERS
 db.run(`
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nama TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role TEXT DEFAULT 'pelapor'
+    role TEXT DEFAULT 'pelapor',
+    kategori TEXT DEFAULT 'mahasiswa'
+)
+`);
+
+// REPORTS
+db.run(`
+CREATE TABLE IF NOT EXISTS reports (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    judul TEXT NOT NULL,
+    lokasi TEXT NOT NULL,
+    deskripsi TEXT NOT NULL,
+    status TEXT DEFAULT 'menunggu',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 `);
 

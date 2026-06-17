@@ -4,18 +4,23 @@ const db = require("../database/db");
 
 const router = express.Router();
 
-// REGISTER
 router.post("/register", async (req, res) => {
 
-    const { nama, email, password } = req.body;
+    const { nama, email, password, role } = req.body;
+
+    if (!nama || !email || !password || !role) {
+        return res.status(400).json({
+            message: "Semua field wajib diisi"
+        });
+    }
 
     try {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         db.run(
-            "INSERT INTO users (nama, email, password) VALUES (?, ?, ?)",
-            [nama, email, hashedPassword],
+            "INSERT INTO users (nama,email,password,role) VALUES (?,?,?,?)",
+            [nama, email, hashedPassword, role],
             function (err) {
 
                 if (err) {
@@ -25,7 +30,7 @@ router.post("/register", async (req, res) => {
                 }
 
                 res.json({
-                    message: "User berhasil didaftarkan"
+                    message: "Registrasi berhasil"
                 });
 
             }
@@ -41,7 +46,6 @@ router.post("/register", async (req, res) => {
 
 });
 
-// LOGIN
 router.post("/login", (req, res) => {
 
     const { email, password } = req.body;
