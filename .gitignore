@@ -1,3 +1,4 @@
 node_modules/
 campusfix.db
+app.db
 .env

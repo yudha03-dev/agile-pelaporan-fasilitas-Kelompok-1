@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFix - Pelaporan Kerusakan</title>
+    <link rel="stylesheet" href="../public/css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="card laporan-card">
+
+        <h1>Form Pelaporan Kerusakan</h1>
+
+        <form>
+
+            <label>Kategori Kerusakan</label>
+            <select required>
+                <option value="">Pilih Kategori</option>
+                <option>AC Rusak</option>
+                <option>Lampu Mati</option>
+                <option>Kursi Rusak</option>
+                <option>Proyektor Rusak</option>
+                <option>Toilet Rusak</option>
+            </select>
+
+            <label>Lokasi</label>
+            <input type="text"
+                   placeholder="Contoh: Gedung A Ruang 203"
+                   required>
+
+            <label>Deskripsi Kronologi</label>
+            <textarea
+                rows="5"
+                placeholder="Jelaskan kerusakan yang ditemukan..."
+                required></textarea>
+
+            <label>Tingkat Urgensi</label>
+            <select required>
+                <option value="">Pilih Urgensi</option>
+                <option>Tinggi</option>
+                <option>Sedang</option>
+                <option>Rendah</option>
+            </select>
+
+            <label>Upload Foto Bukti</label>
+            <input type="file"
+                   accept="image/*">
+
+            <button type="submit">
+                Kirim Laporan
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

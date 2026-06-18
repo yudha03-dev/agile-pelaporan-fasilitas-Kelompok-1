@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pelapor - CampusFix</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body{
+            background:#f4f6f9;
+        }
+
+        .navbar{
+            background:#2563eb;
+            color:white;
+            padding:15px 30px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .container{
+            width:90%;
+            margin:30px auto;
+        }
+
+        .welcome{
+            margin-bottom:20px;
+        }
+
+        .cards{
+            display:grid;
+            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+            gap:20px;
+            margin-bottom:30px;
+        }
+
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .card h2{
+            color:#2563eb;
+            margin-top:10px;
+        }
+
+        .btn{
+            background:#2563eb;
+            color:white;
+            padding:10px 20px;
+            border:none;
+            border-radius:5px;
+            text-decoration:none;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        table th,
+        table td{
+            padding:12px;
+            border:1px solid #ddd;
+            text-align:left;
+        }
+
+        table th{
+            background:#2563eb;
+            color:white;
+        }
+
+        .status{
+            padding:5px 10px;
+            border-radius:5px;
+            color:white;
+            font-size:14px;
+        }
+
+        .dilaporkan{
+            background:orange;
+        }
+
+        .diproses{
+            background:#0ea5e9;
+        }
+
+        .selesai{
+            background:green;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>CampusFix</h2>
+        <span>Halo, Yudha</span>
+    </div>
+
+    <div class="container">
+
+        <div class="welcome">
+            <h1>Dashboard Pelapor</h1>
+            <p>Pantau seluruh laporan kerusakan fasilitas kampus.</p>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h4>Total Laporan</h4>
+                <h2>12</h2>
+            </div>
+
+            <div class="card">
+                <h4>Dilaporkan</h4>
+                <h2>4</h2>
+            </div>
+
+            <div class="card">
+                <h4>Diproses</h4>
+                <h2>5</h2>
+            </div>
+
+            <div class="card">
+                <h4>Selesai</h4>
+                <h2>3</h2>
+            </div>
+
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <a href="/laporan" class="btn">
+                + Buat Laporan Baru
+            </a>
+        </div>
+
+        <h2 style="margin-bottom:15px;">
+            Riwayat Laporan Terbaru
+        </h2>
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>Kategori</th>
+                <th>Lokasi</th>
+                <th>Status</th>
+            </tr>
+
+            <tr>
+                <td>L001</td>
+                <td>Lampu Rusak</td>
+                <td>Gedung A</td>
+                <td>
+                    <span class="status diproses">
+                        Diproses
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>L002</td>
+                <td>Kursi Rusak</td>
+                <td>Ruang Kelas B2</td>
+                <td>
+                    <span class="status selesai">
+                        Selesai
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>L003</td>
+                <td>AC Tidak Dingin</td>
+                <td>Lab Komputer</td>
+                <td>
+                    <span class="status dilaporkan">
+                        Dilaporkan
+                    </span>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</body>
+</html>

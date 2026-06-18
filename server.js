@@ -1,30 +1,50 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
+const PORT = 3000;
 
+// Database
+const db = require("./database/db");
+
+// Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Static Files
 app.use(express.static("public"));
 
-require("./database/db");
-
+// Routes
 const authRoutes = require("./routes/auth");
 const reportRoutes = require("./routes/reports");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/reports", reportRoutes);
-const db = require("./database/db");
 
-db.all("SELECT id, nama, email, role FROM users", [], (err, rows) => {
-    if (err) {
-        console.log(err.message);
-    } else {
-        console.log("ISI USERS:", rows);
+// Debug users
+db.all(
+    "SELECT id, nama, email, role FROM users",
+    [],
+    (err, rows) => {
+        if (err) {
+            console.log(err.message);
+        } else {
+            console.log("ISI USERS:", rows);
+        }
     }
-});
+);
+
+// Halaman utama
 app.get("/", (req, res) => {
-    res.send("CampusFix API Berjalan");
+    res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
-app.listen(3000, () => {
-    console.log("Server berjalan di port 3000");
+// Halaman register
+app.get("/register", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "register.html"));
+});
+
+// Jalankan server
+app.listen(PORT, () => {
+    console.log(`Server berjalan di port ${PORT}`);
 });
