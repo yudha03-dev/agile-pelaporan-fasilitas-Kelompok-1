@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riwayat Laporan</title>
+    <style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+h2{
+    margin-top:0;
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#2563eb;
+    color:white;
+    padding:12px;
+}
+
+td{
+    padding:12px;
+    border:1px solid #ddd;
+}
+
+tr:nth-child(even){
+    background:#f9fafb;
+}
+</style>
+</head>
+<body>
+
+<h2>Riwayat Laporan Saya</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Judul</th>
+            <th>Lokasi</th>
+            <th>Deskripsi</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="reportTable"></tbody>
+</table>
+
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+async function loadReports(){
+    const response = await fetch("/api/reports/user/" + user.id);
+    const reports = await response.json();
+
+    document.getElementById("reportTable").innerHTML =
+    reports.map(report => `
+        <tr>
+            <td>${report.judul}</td>
+            <td>${report.lokasi}</td>
+            <td>${report.deskripsi}</td>
+            <td>${report.status}</td>
+        </tr>
+    `).join("");
+}
+
+loadReports();
+</script>
+
+</body>
+</html>
