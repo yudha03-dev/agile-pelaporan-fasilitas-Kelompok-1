@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Dashboard Admin - CampusFix</title>
 
 <style>
-
 *{
     margin:0;
     padding:0;
@@ -42,7 +40,6 @@ body{
 
 .card h2{
     margin-bottom:20px;
-    color:#333;
 }
 
 table{
@@ -59,7 +56,6 @@ table th,
 table td{
     padding:12px;
     border:1px solid #ddd;
-    text-align:left;
 }
 
 table tr:nth-child(even){
@@ -102,8 +98,8 @@ table tr:nth-child(even){
     background:#ef4444;
 }
 
-.btn:hover{
-    opacity:0.9;
+.btn-delete{
+    background:#dc2626;
 }
 
 .info-box{
@@ -122,7 +118,6 @@ table tr:nth-child(even){
 }
 
 .info-card h3{
-    color:#666;
     margin-bottom:10px;
 }
 
@@ -131,21 +126,7 @@ table tr:nth-child(even){
     font-weight:bold;
     color:#2563eb;
 }
-
-@media(max-width:768px){
-
-    .info-box{
-        grid-template-columns:1fr;
-    }
-
-    table{
-        font-size:14px;
-    }
-
-}
-
 </style>
-
 </head>
 <body>
 
@@ -156,7 +137,6 @@ table tr:nth-child(even){
 <div class="container">
 
     <div class="info-box">
-
         <div class="info-card">
             <h3>Total Laporan</h3>
             <p id="total">0</p>
@@ -171,7 +151,6 @@ table tr:nth-child(even){
             <h3>Menunggu</h3>
             <p id="pending">0</p>
         </div>
-
     </div>
 
     <div class="card">
@@ -179,7 +158,6 @@ table tr:nth-child(even){
         <h2>Daftar Laporan</h2>
 
         <table>
-
             <thead>
                 <tr>
                     <th>ID</th>
@@ -192,7 +170,6 @@ table tr:nth-child(even){
             </thead>
 
             <tbody id="list"></tbody>
-
         </table>
 
     </div>
@@ -200,32 +177,23 @@ table tr:nth-child(even){
 </div>
 
 <script>
-
 async function loadReports(){
 
     const res = await fetch("/api/reports");
     const data = await res.json();
 
-    document.getElementById("total").innerText =
-        data.length;
-
+    document.getElementById("total").innerText = data.length;
     document.getElementById("approved").innerText =
-        data.filter(x=>x.status==="approved").length;
-
+        data.filter(x => x.status === "approved").length;
     document.getElementById("pending").innerText =
-        data.filter(x=>x.status==="menunggu").length;
+        data.filter(x => x.status === "menunggu").length;
 
     document.getElementById("list").innerHTML =
     data.map(r => `
-
         <tr>
-
             <td>${r.id}</td>
-
             <td>${r.judul}</td>
-
             <td>${r.lokasi}</td>
-
             <td>${r.deskripsi}</td>
 
             <td>
@@ -235,27 +203,23 @@ async function loadReports(){
             </td>
 
             <td>
-
-                <button
-                    class="btn btn-approve"
-                    onclick="updateStatus(${r.id},'approved')"
-                >
+                <button class="btn btn-approve"
+                    onclick="updateStatus(${r.id},'approved')">
                     Approve
                 </button>
 
-                <button
-                    class="btn btn-reject"
-                    onclick="updateStatus(${r.id},'rejected')"
-                >
+                <button class="btn btn-reject"
+                    onclick="updateStatus(${r.id},'rejected')">
                     Reject
                 </button>
 
+                <button class="btn btn-delete"
+                    onclick="deleteReport(${r.id})">
+                    Delete
+                </button>
             </td>
-
         </tr>
-
     `).join("");
-
 }
 
 async function updateStatus(id,status){
@@ -265,16 +229,28 @@ async function updateStatus(id,status){
         headers:{
             "Content-Type":"application/json"
         },
-        body:JSON.stringify({
-            status
-        })
+        body:JSON.stringify({status})
     });
 
     loadReports();
 }
 
-loadReports();
+async function deleteReport(id){
 
+    const confirmDelete = confirm("Yakin ingin menghapus laporan?");
+    if(!confirmDelete) return;
+
+    const res = await fetch("/api/reports/" + id,{
+        method:"DELETE"
+    });
+
+    const data = await res.json();
+    alert(data.message);
+
+    loadReports();
+}
+
+loadReports();
 </script>
 
 </body>
