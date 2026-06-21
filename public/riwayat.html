@@ -46,23 +46,156 @@ td{
 tr:nth-child(even){
     background:#f9fafb;
 }
+
+button{
+    padding:8px 12px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+}
+
+.status{
+    padding:6px 12px;
+    border-radius:20px;
+    color:rgb(20, 20, 20);
+    font-size:14px;
+    font-weight:bold;
+}
+
+.dilaporkan{
+    background:#dc2626;
+}
+
+.diproses{
+    background:#f59e0b;
+}
+
+.selesai{
+    background:#16a34a;
+}
+
+/* Modal */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+}
+
+.modal-content{
+    background:white;
+    width:500px;
+    margin:100px auto;
+    padding:20px;
+    border-radius:10px;
+}
+
+.close{
+    float:right;
+    font-size:20px;
+    cursor:pointer;
+}
+
+/* Tracking Status */
+.tracking{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.step{
+    text-align:center;
+}
+
+.circle{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#d1d5db;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    font-weight:bold;
+}
+
+.line{
+    width:80px;
+    height:4px;
+    background:#d1d5db;
+}
+
+.active .circle{
+    background:#2563eb;
+}
+
+.active p{
+    font-weight:bold;
+    color:#2563eb;
+}
 </style>
 </head>
 <body>
 
-<h2>Riwayat Laporan Saya</h2>
+<div class="container">
+    <div class="card">
+        <h2>Riwayat Laporan Saya</h2>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Judul</th>
-            <th>Lokasi</th>
-            <th>Deskripsi</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody id="reportTable"></tbody>
-</table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Judul</th>
+                    <th>Lokasi</th>
+                    <th>Status</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+            <tbody id="reportTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Detail -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Detail Laporan</h3>
+
+        <p><strong>Judul:</strong> <span id="detailJudul"></span></p>
+        <p><strong>Lokasi:</strong> <span id="detailLokasi"></span></p>
+        <p><strong>Deskripsi:</strong> <span id="detailDeskripsi"></span></p>
+
+        <h3>Status Laporan</h3>
+
+        <div class="tracking">
+            <div class="step" id="step1">
+                <div class="circle">1</div>
+                <p>Dilaporkan</p>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="step" id="step2">
+                <div class="circle">2</div>
+                <p>Diproses</p>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="step" id="step3">
+                <div class="circle">3</div>
+                <p>Selesai</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 const user = JSON.parse(localStorage.getItem("user"));
@@ -72,14 +205,67 @@ async function loadReports(){
     const reports = await response.json();
 
     document.getElementById("reportTable").innerHTML =
-    reports.map(report => `
+    reports.map(report => {
+        let statusClass = "";
+
+        if(report.status === "Dilaporkan"){
+            statusClass = "dilaporkan";
+        } 
+        else if(report.status === "Diproses"){
+            statusClass = "diproses";
+        } 
+        else if(report.status === "Selesai"){
+            statusClass = "selesai";
+        }
+
+        return `
         <tr>
             <td>${report.judul}</td>
             <td>${report.lokasi}</td>
-            <td>${report.deskripsi}</td>
-            <td>${report.status}</td>
+            <td>
+                <span class="status ${statusClass}">
+                    ${report.status}
+                </span>
+            </td>
+            <td>
+                <button onclick='showDetail(${JSON.stringify(report)})'>
+                    Detail
+                </button>
+            </td>
         </tr>
-    `).join("");
+        `;
+    }).join("");
+}
+
+function showDetail(report){
+    document.getElementById("detailJudul").innerText = report.judul;
+    document.getElementById("detailLokasi").innerText = report.lokasi;
+    document.getElementById("detailDeskripsi").innerText = report.deskripsi;
+
+    // reset semua step
+    document.getElementById("step1").classList.remove("active");
+    document.getElementById("step2").classList.remove("active");
+    document.getElementById("step3").classList.remove("active");
+
+    // aktifkan step sesuai status
+    if(report.status === "Dilaporkan"){
+        document.getElementById("step1").classList.add("active");
+    }
+    else if(report.status === "Diproses"){
+        document.getElementById("step1").classList.add("active");
+        document.getElementById("step2").classList.add("active");
+    }
+    else if(report.status === "Selesai"){
+        document.getElementById("step1").classList.add("active");
+        document.getElementById("step2").classList.add("active");
+        document.getElementById("step3").classList.add("active");
+    }
+
+    document.getElementById("detailModal").style.display = "block";
+}
+
+function closeModal(){
+    document.getElementById("detailModal").style.display = "none";
 }
 
 loadReports();
