@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buat Laporan</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:30px;
+}
+
+.container{
+    max-width:800px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+h2{
+    margin-top:0;
+    margin-bottom:20px;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+</style>
+</head>
+<body>
+
+<h2>Kirim Laporan Baru</h2>
+
+<form id="reportForm">
+    <input type="text" id="judul" placeholder="Judul Laporan" required>
+    <input type="text" id="lokasi" placeholder="Lokasi" required>
+    <textarea id="deskripsi" placeholder="Deskripsi" required></textarea>
+    <button type="submit">Kirim</button>
+</form>
+
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+document.getElementById("reportForm")
+.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+
+    const response = await fetch("/api/reports",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            user_id:user.id,
+            judul:document.getElementById("judul").value,
+            lokasi:document.getElementById("lokasi").value,
+            deskripsi:document.getElementById("deskripsi").value
+        })
+    });
+
+    const data = await response.json();
+    alert(data.message);
+});
+</script>
+
+</body>
+</html>
