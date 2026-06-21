@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Buat Laporan</title>
+
 <style>
 body{
     font-family: Arial, sans-serif;
@@ -25,10 +26,12 @@ body{
 h2{
     margin-top:0;
     margin-bottom:20px;
+    color:#2563eb;
 }
 
 input,
-textarea{
+textarea,
+select{
     width:100%;
     padding:12px;
     margin-bottom:15px;
@@ -55,23 +58,67 @@ button:hover{
     background:#1d4ed8;
 }
 </style>
+
 </head>
 <body>
+
+<div class="container">
+<div class="card">
 
 <h2>Kirim Laporan Baru</h2>
 
 <form id="reportForm">
-    <input type="text" id="judul" placeholder="Judul Laporan" required>
-    <input type="text" id="lokasi" placeholder="Lokasi" required>
-    <textarea id="deskripsi" placeholder="Deskripsi" required></textarea>
-    <button type="submit">Kirim</button>
+
+    <input
+        type="text"
+        id="judul"
+        placeholder="Judul Laporan"
+        required>
+
+    <select id="kategori" required>
+        <option value="">Pilih Kategori Kerusakan</option>
+        <option value="Lampu Rusak">Lampu Rusak</option>
+        <option value="AC Rusak">AC Rusak</option>
+        <option value="Kursi Rusak">Kursi Rusak</option>
+        <option value="Toilet Rusak">Toilet Rusak</option>
+        <option value="Proyektor Rusak">Proyektor Rusak</option>
+        <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <input
+        type="text"
+        id="lokasi"
+        placeholder="Contoh: Gedung A Ruang 203"
+        required>
+
+    <textarea
+        id="deskripsi"
+        placeholder="Jelaskan kronologi kerusakan..."
+        required></textarea>
+
+    <select id="urgensi" required>
+        <option value="">Pilih Tingkat Urgensi</option>
+        <option value="Tinggi">Tinggi</option>
+        <option value="Sedang">Sedang</option>
+        <option value="Rendah">Rendah</option>
+    </select>
+
+    <button type="submit">
+        Kirim Laporan
+    </button>
+
 </form>
 
+</div>
+</div>
+
 <script>
+
 const user = JSON.parse(localStorage.getItem("user"));
 
 document.getElementById("reportForm")
 .addEventListener("submit", async (e)=>{
+
     e.preventDefault();
 
     const response = await fetch("/api/reports",{
@@ -82,14 +129,19 @@ document.getElementById("reportForm")
         body:JSON.stringify({
             user_id:user.id,
             judul:document.getElementById("judul").value,
+            kategori:document.getElementById("kategori").value,
             lokasi:document.getElementById("lokasi").value,
-            deskripsi:document.getElementById("deskripsi").value
+            deskripsi:document.getElementById("deskripsi").value,
+            urgensi:document.getElementById("urgensi").value
         })
     });
 
     const data = await response.json();
+
     alert(data.message);
+
 });
+
 </script>
 
 </body>
