@@ -159,29 +159,29 @@ fotoInput.addEventListener("change", () => {
 });
 
 document.getElementById("reportForm")
-.addEventListener("submit", async (e)=>{
-
+.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/reports",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-            user_id:user.id,
-            judul:document.getElementById("judul").value,
-            kategori:document.getElementById("kategori").value,
-            lokasi:document.getElementById("lokasi").value,
-            deskripsi:document.getElementById("deskripsi").value,
-            urgensi:document.getElementById("urgensi").value
-        })
+    const formData = new FormData();
+
+    formData.append("user_id", user.id);
+    formData.append("judul", document.getElementById("judul").value);
+    formData.append("kategori", document.getElementById("kategori").value);
+    formData.append("lokasi", document.getElementById("lokasi").value);
+    formData.append("deskripsi", document.getElementById("deskripsi").value);
+    formData.append("urgensi", document.getElementById("urgensi").value);
+
+    if (fotoInput.files[0]) {
+        formData.append("foto", fotoInput.files[0]);
+    }
+
+    const response = await fetch("/api/reports", {
+        method: "POST",
+        body: formData
     });
 
     const data = await response.json();
-
     alert(data.message);
-
 });
 
 </script>

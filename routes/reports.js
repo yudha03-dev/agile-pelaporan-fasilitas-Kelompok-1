@@ -1,39 +1,37 @@
 const express = require("express");
 const db = require("../database/db");
+const multer = require("multer");
+const path = require("path");
 
 const router = express.Router();
 
 /* =========================
+   MULTER SETUP
+========================= */
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage });
+
+/* =========================
    CREATE REPORT
 ========================= */
-router.post("/", (req, res) => {
-    const {
-        user_id,
-        judul,
-        kategori,
-        lokasi,
-        deskripsi,
-        urgensi
-    } = req.body;
+router.post("/", upload.single("foto"), (req, res) => {
+    const { user_id, judul, kategori, lokasi, deskripsi, urgensi } = req.body;
 
-    if (
-        !user_id ||
-        !judul ||
-        !kategori ||
-        !lokasi ||
-        !deskripsi ||
-        !urgensi
-    ) {
-        return res.status(400).json({
-            message: "Semua field wajib diisi"
-        });
-    }
+    const foto = req.file ? "/uploads/" + req.file.filename : null;
 
     db.run(
         `
         INSERT INTO reports
-        (user_id, judul, kategori, lokasi, deskripsi, urgensi, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (user_id, judul, kategori, lokasi, deskripsi, urgensi, foto, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
             user_id,
@@ -42,19 +40,18 @@ router.post("/", (req, res) => {
             lokasi,
             deskripsi,
             urgensi,
+            foto,
             "Dilaporkan"
         ],
-        function (err) {
-            if (err) {
+        function(err){
+            if(err){
                 return res.status(500).json({
                     message: err.message
                 });
             }
 
-            res.status(201).json({
-                message: "Laporan berhasil dikirim",
-                report_id: this.lastID,
-                status: "Dilaporkan"
+            res.json({
+                message: "Laporan berhasil dikirim"
             });
         }
     );
@@ -91,16 +88,7 @@ router.get("/user/:id", (req, res) => {
 
     db.all(
         `
-        SELECT 
-            id,
-            user_id,
-            judul,
-            kategori,
-            lokasi,
-            deskripsi,
-            urgensi,
-            status,
-            created_at
+        SELECT *
         FROM reports
         WHERE user_id = ?
         ORDER BY created_at DESC
