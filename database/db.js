@@ -26,9 +26,11 @@ CREATE TABLE IF NOT EXISTS reports (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     judul TEXT NOT NULL,
+    kategori TEXT NOT NULL,
     lokasi TEXT NOT NULL,
     deskripsi TEXT NOT NULL,
-    status TEXT DEFAULT 'menunggu',
+    urgensi TEXT NOT NULL,
+    status TEXT DEFAULT 'Dilaporkan',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 `);
