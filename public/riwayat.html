@@ -149,14 +149,16 @@ button{
         <h2>Riwayat Laporan Saya</h2>
 
         <table>
-            <thead>
-                <tr>
-                    <th>Judul</th>
-                    <th>Lokasi</th>
-                    <th>Status</th>
-                    <th>Detail</th>
-                </tr>
-            </thead>
+<thead>
+    <tr>
+        <th>Judul</th>
+        <th>Kategori</th>
+        <th>Lokasi</th>
+        <th>Urgensi</th>
+        <th>Status</th>
+        <th>Detail</th>
+    </tr>
+</thead>
             <tbody id="reportTable"></tbody>
         </table>
     </div>
@@ -169,9 +171,10 @@ button{
         <h3>Detail Laporan</h3>
 
         <p><strong>Judul:</strong> <span id="detailJudul"></span></p>
-        <p><strong>Lokasi:</strong> <span id="detailLokasi"></span></p>
-        <p><strong>Deskripsi:</strong> <span id="detailDeskripsi"></span></p>
-
+<p><strong>Kategori:</strong> <span id="detailKategori"></span></p>
+<p><strong>Lokasi:</strong> <span id="detailLokasi"></span></p>
+<p><strong>Urgensi:</strong> <span id="detailUrgensi"></span></p>
+<p><strong>Deskripsi:</strong> <span id="detailDeskripsi"></span></p>
         <h3>Status Laporan</h3>
 
         <div class="tracking">
@@ -219,27 +222,31 @@ async function loadReports(){
         }
 
         return `
-        <tr>
-            <td>${report.judul}</td>
-            <td>${report.lokasi}</td>
-            <td>
-                <span class="status ${statusClass}">
-                    ${report.status}
-                </span>
-            </td>
-            <td>
-                <button onclick='showDetail(${JSON.stringify(report)})'>
-                    Detail
-                </button>
-            </td>
-        </tr>
-        `;
+<tr>
+    <td>${report.judul}</td>
+    <td>${report.kategori}</td>
+    <td>${report.lokasi}</td>
+    <td>${report.urgensi}</td>
+    <td>
+        <span class="status ${statusClass}">
+            ${report.status}
+        </span>
+    </td>
+    <td>
+        <button onclick='showDetail(${JSON.stringify(report)})'>
+            Detail
+        </button>
+    </td>
+</tr>
+`;
     }).join("");
 }
 
 function showDetail(report){
     document.getElementById("detailJudul").innerText = report.judul;
+    document.getElementById("detailKategori").innerText = report.kategori;
     document.getElementById("detailLokasi").innerText = report.lokasi;
+    document.getElementById("detailUrgensi").innerText = report.urgensi;
     document.getElementById("detailDeskripsi").innerText = report.deskripsi;
 
     // reset semua step

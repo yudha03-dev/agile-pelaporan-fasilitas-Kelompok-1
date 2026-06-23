@@ -42,6 +42,18 @@ body{
     margin-bottom:20px;
 }
 
+.search-box{
+    margin-bottom:20px;
+}
+
+.search-box input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
@@ -56,6 +68,7 @@ table th,
 table td{
     padding:12px;
     border:1px solid #ddd;
+    text-align:center;
 }
 
 table tr:nth-child(even){
@@ -69,16 +82,16 @@ table tr:nth-child(even){
     font-size:13px;
 }
 
-.menunggu{
+.Dilaporkan{
+    background:#dc2626;
+}
+
+.Diproses{
     background:#f59e0b;
 }
 
-.approved{
-    background:#10b981;
-}
-
-.rejected{
-    background:#ef4444;
+.Selesai{
+    background:#16a34a;
 }
 
 .btn{
@@ -87,15 +100,15 @@ table tr:nth-child(even){
     border-radius:6px;
     cursor:pointer;
     color:white;
-    margin-right:5px;
+    margin:3px;
 }
 
-.btn-approve{
-    background:#10b981;
+.btn-proses{
+    background:#f59e0b;
 }
 
-.btn-reject{
-    background:#ef4444;
+.btn-selesai{
+    background:#16a34a;
 }
 
 .btn-delete{
@@ -143,27 +156,37 @@ table tr:nth-child(even){
         </div>
 
         <div class="info-card">
-            <h3>Disetujui</h3>
-            <p id="approved">0</p>
+            <h3>Selesai</h3>
+            <p id="selesai">0</p>
         </div>
 
         <div class="info-card">
-            <h3>Menunggu</h3>
+            <h3>Dilaporkan</h3>
             <p id="pending">0</p>
         </div>
     </div>
 
     <div class="card">
-
         <h2>Daftar Laporan</h2>
+
+        <div class="search-box">
+            <input 
+                type="text"
+                id="searchInput"
+                placeholder="Cari laporan berdasarkan ID, Judul, Kategori, Lokasi, Status..."
+                onkeyup="searchReports()"
+            >
+        </div>
 
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Judul</th>
+                    <th>Kategori</th>
                     <th>Lokasi</th>
                     <th>Deskripsi</th>
+                    <th>Urgensi</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -171,30 +194,36 @@ table tr:nth-child(even){
 
             <tbody id="list"></tbody>
         </table>
-
     </div>
 
 </div>
 
 <script>
+let allReports = [];
+
 async function loadReports(){
-
     const res = await fetch("/api/reports");
-    const data = await res.json();
+    allReports = await res.json();
 
-    document.getElementById("total").innerText = data.length;
-    document.getElementById("approved").innerText =
-        data.filter(x => x.status === "approved").length;
+    document.getElementById("total").innerText = allReports.length;
+    document.getElementById("selesai").innerText =
+        allReports.filter(x => x.status === "Selesai").length;
     document.getElementById("pending").innerText =
-        data.filter(x => x.status === "menunggu").length;
+        allReports.filter(x => x.status === "Dilaporkan").length;
 
+    renderTable(allReports);
+}
+
+function renderTable(data){
     document.getElementById("list").innerHTML =
     data.map(r => `
         <tr>
             <td>${r.id}</td>
             <td>${r.judul}</td>
+            <td>${r.kategori}</td>
             <td>${r.lokasi}</td>
             <td>${r.deskripsi}</td>
+            <td>${r.urgensi}</td>
 
             <td>
                 <span class="status ${r.status}">
@@ -203,14 +232,14 @@ async function loadReports(){
             </td>
 
             <td>
-                <button class="btn btn-approve"
-                    onclick="updateStatus(${r.id},'approved')">
-                    Approve
+                <button class="btn btn-proses"
+                    onclick="updateStatus(${r.id}, 'Diproses')">
+                    Proses
                 </button>
 
-                <button class="btn btn-reject"
-                    onclick="updateStatus(${r.id},'rejected')">
-                    Reject
+                <button class="btn btn-selesai"
+                    onclick="updateStatus(${r.id}, 'Selesai')">
+                    Selesai
                 </button>
 
                 <button class="btn btn-delete"
@@ -222,9 +251,25 @@ async function loadReports(){
     `).join("");
 }
 
-async function updateStatus(id,status){
+function searchReports(){
+    const keyword = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
 
-    await fetch("/api/reports/"+id,{
+    const filtered = allReports.filter(report =>
+        report.id.toString().includes(keyword) ||
+        report.judul.toLowerCase().includes(keyword) ||
+        report.kategori.toLowerCase().includes(keyword) ||
+        report.lokasi.toLowerCase().includes(keyword) ||
+        report.status.toLowerCase().includes(keyword)
+    );
+
+    renderTable(filtered);
+}
+
+async function updateStatus(id, status){
+    await fetch("/api/reports/" + id,{
         method:"PUT",
         headers:{
             "Content-Type":"application/json"
@@ -236,16 +281,12 @@ async function updateStatus(id,status){
 }
 
 async function deleteReport(id){
-
     const confirmDelete = confirm("Yakin ingin menghapus laporan?");
     if(!confirmDelete) return;
 
-    const res = await fetch("/api/reports/" + id,{
+    await fetch("/api/reports/" + id,{
         method:"DELETE"
     });
-
-    const data = await res.json();
-    alert(data.message);
 
     loadReports();
 }

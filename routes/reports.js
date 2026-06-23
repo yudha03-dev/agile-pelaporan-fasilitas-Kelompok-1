@@ -7,9 +7,23 @@ const router = express.Router();
    CREATE REPORT
 ========================= */
 router.post("/", (req, res) => {
-    const { user_id, judul, lokasi, deskripsi } = req.body;
+    const {
+        user_id,
+        judul,
+        kategori,
+        lokasi,
+        deskripsi,
+        urgensi
+    } = req.body;
 
-    if (!user_id || !judul || !lokasi || !deskripsi) {
+    if (
+        !user_id ||
+        !judul ||
+        !kategori ||
+        !lokasi ||
+        !deskripsi ||
+        !urgensi
+    ) {
         return res.status(400).json({
             message: "Semua field wajib diisi"
         });
@@ -17,10 +31,19 @@ router.post("/", (req, res) => {
 
     db.run(
         `
-        INSERT INTO reports (user_id, judul, lokasi, deskripsi, status)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO reports
+        (user_id, judul, kategori, lokasi, deskripsi, urgensi, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
-        [user_id, judul, lokasi, deskripsi, "Dilaporkan"],
+        [
+            user_id,
+            judul,
+            kategori,
+            lokasi,
+            deskripsi,
+            urgensi,
+            "Dilaporkan"
+        ],
         function (err) {
             if (err) {
                 return res.status(500).json({
@@ -68,7 +91,16 @@ router.get("/user/:id", (req, res) => {
 
     db.all(
         `
-        SELECT id, user_id, judul, lokasi, deskripsi, status, created_at
+        SELECT 
+            id,
+            user_id,
+            judul,
+            kategori,
+            lokasi,
+            deskripsi,
+            urgensi,
+            status,
+            created_at
         FROM reports
         WHERE user_id = ?
         ORDER BY created_at DESC
@@ -91,15 +123,6 @@ router.get("/user/:id", (req, res) => {
 ========================= */
 router.put("/:id", (req, res) => {
     const { status } = req.body;
-    const reportId = req.params.id;
-
-    const allowedStatus = ["Dilaporkan", "Diproses", "Selesai"];
-
-    if (!allowedStatus.includes(status)) {
-        return res.status(400).json({
-            message: "Status tidak valid"
-        });
-    }
 
     db.run(
         `
@@ -107,7 +130,7 @@ router.put("/:id", (req, res) => {
         SET status = ?
         WHERE id = ?
         `,
-        [status, reportId],
+        [status, req.params.id],
         function (err) {
             if (err) {
                 return res.status(500).json({
@@ -115,16 +138,8 @@ router.put("/:id", (req, res) => {
                 });
             }
 
-            if (this.changes === 0) {
-                return res.status(404).json({
-                    message: "Laporan tidak ditemukan"
-                });
-            }
-
             res.json({
-                message: "Status berhasil diperbarui",
-                report_id: reportId,
-                new_status: status
+                message: "Status berhasil diperbarui"
             });
         }
     );
@@ -134,24 +149,16 @@ router.put("/:id", (req, res) => {
    DELETE REPORT
 ========================= */
 router.delete("/:id", (req, res) => {
-    const reportId = req.params.id;
-
     db.run(
         `
         DELETE FROM reports
         WHERE id = ?
         `,
-        [reportId],
+        [req.params.id],
         function (err) {
             if (err) {
                 return res.status(500).json({
                     message: err.message
-                });
-            }
-
-            if (this.changes === 0) {
-                return res.status(404).json({
-                    message: "Laporan tidak ditemukan"
                 });
             }
 
