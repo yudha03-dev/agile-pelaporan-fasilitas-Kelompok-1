@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS reports (
     lokasi TEXT NOT NULL,
     deskripsi TEXT NOT NULL,
     urgensi TEXT NOT NULL,
+    foto TEXT,
     status TEXT DEFAULT 'Dilaporkan',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )
