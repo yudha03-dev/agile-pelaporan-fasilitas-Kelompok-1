@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Buat Laporan</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusFix - Buat Laporan</title>
 
 <style>
 body{
@@ -45,6 +47,12 @@ textarea{
     resize:vertical;
 }
 
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
+}
+
 button{
     background:#2563eb;
     color:white;
@@ -52,10 +60,20 @@ button{
     padding:12px 20px;
     border-radius:8px;
     cursor:pointer;
+    width:100%;
 }
 
 button:hover{
     background:#1d4ed8;
+}
+
+#preview{
+    display:none;
+    max-width:250px;
+    margin-bottom:15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    padding:5px;
 }
 </style>
 
@@ -63,6 +81,7 @@ button:hover{
 <body>
 
 <div class="container">
+
 <div class="card">
 
 <h2>Kirim Laporan Baru</h2>
@@ -77,31 +96,40 @@ button:hover{
 
     <select id="kategori" required>
         <option value="">Pilih Kategori Kerusakan</option>
-        <option value="Lampu Rusak">Lampu Rusak</option>
-        <option value="AC Rusak">AC Rusak</option>
-        <option value="Kursi Rusak">Kursi Rusak</option>
-        <option value="Toilet Rusak">Toilet Rusak</option>
-        <option value="Proyektor Rusak">Proyektor Rusak</option>
-        <option value="Lainnya">Lainnya</option>
+        <option>Lampu Rusak</option>
+        <option>AC Rusak</option>
+        <option>Kursi Rusak</option>
+        <option>Toilet Rusak</option>
+        <option>Lainnya</option>
     </select>
 
     <input
         type="text"
         id="lokasi"
-        placeholder="Contoh: Gedung A Ruang 203"
+        placeholder="Contoh: Gedung A Lantai 2"
         required>
 
     <textarea
         id="deskripsi"
         placeholder="Jelaskan kronologi kerusakan..."
-        required></textarea>
+        required>
+    </textarea>
 
     <select id="urgensi" required>
         <option value="">Pilih Tingkat Urgensi</option>
-        <option value="Tinggi">Tinggi</option>
-        <option value="Sedang">Sedang</option>
-        <option value="Rendah">Rendah</option>
+        <option>Tinggi</option>
+        <option>Sedang</option>
+        <option>Rendah</option>
     </select>
+
+    <label>Upload Foto Bukti Kerusakan</label>
+
+    <input
+        type="file"
+        id="foto"
+        accept="image/*">
+
+    <img id="preview">
 
     <button type="submit">
         Kirim Laporan
@@ -115,6 +143,20 @@ button:hover{
 <script>
 
 const user = JSON.parse(localStorage.getItem("user"));
+
+const fotoInput = document.getElementById("foto");
+const preview = document.getElementById("preview");
+
+fotoInput.addEventListener("change", () => {
+
+    const file = fotoInput.files[0];
+
+    if(file){
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    }
+
+});
 
 document.getElementById("reportForm")
 .addEventListener("submit", async (e)=>{
