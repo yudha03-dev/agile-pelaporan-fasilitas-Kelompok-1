@@ -140,6 +140,22 @@ button{
     font-weight:bold;
     color:#2563eb;
 }
+.report-img{
+    width:80px;
+    height:80px;
+    object-fit:cover;
+    border-radius:8px;
+    border:1px solid #ddd;
+}
+
+#detailFoto{
+    width:100%;
+    max-width:300px;
+    margin-top:10px;
+    margin-bottom:15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+}
 </style>
 </head>
 <body>
@@ -154,6 +170,7 @@ button{
         <th>Judul</th>
         <th>Kategori</th>
         <th>Lokasi</th>
+        <th>Foto</th>
         <th>Urgensi</th>
         <th>Status</th>
         <th>Detail</th>
@@ -175,6 +192,9 @@ button{
 <p><strong>Lokasi:</strong> <span id="detailLokasi"></span></p>
 <p><strong>Urgensi:</strong> <span id="detailUrgensi"></span></p>
 <p><strong>Deskripsi:</strong> <span id="detailDeskripsi"></span></p>
+<p><strong>Foto Bukti:</strong></p>
+<img id="detailFoto" src="">
+
         <h3>Status Laporan</h3>
 
         <div class="tracking">
@@ -226,6 +246,15 @@ async function loadReports(){
     <td>${report.judul}</td>
     <td>${report.kategori}</td>
     <td>${report.lokasi}</td>
+
+    <td>
+        ${
+            report.foto
+            ? `<img src="${report.foto}" class="report-img">`
+            : `Tidak ada`
+        }
+    </td>
+
     <td>${report.urgensi}</td>
     <td>
         <span class="status ${statusClass}">
@@ -248,7 +277,7 @@ function showDetail(report){
     document.getElementById("detailLokasi").innerText = report.lokasi;
     document.getElementById("detailUrgensi").innerText = report.urgensi;
     document.getElementById("detailDeskripsi").innerText = report.deskripsi;
-
+    document.getElementById("detailFoto").src = report.foto || "";
     // reset semua step
     document.getElementById("step1").classList.remove("active");
     document.getElementById("step2").classList.remove("active");
