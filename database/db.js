@@ -32,5 +32,4 @@ CREATE TABLE IF NOT EXISTS reports (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 `);
-
 module.exports = db;
